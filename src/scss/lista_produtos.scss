@@ -1,0 +1,87 @@
+.produtos{
+    .lista-produtos{
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0.5rem;
+        justify-content: space-between;
+        .product-card{
+            width: 50%;
+            align-items: center;
+            margin-top: 0.8rem;
+            img{
+                width: 100%;
+            }
+            h2{
+                text-transform: uppercase;
+                text-align: center;
+                margin-top: 0.5rem;
+            }
+            p{
+                font-weight: 700;
+                text-align: center;
+                font-size: 16px;
+                margin-top: 0.5rem;
+            }
+            .parcelamento{
+                font-weight: 300;
+                color: var(--cor-cinza);
+                margin-top: 0.2rem;
+            }
+            button {
+                display: flex;
+                justify-content: center;
+                margin: auto;
+                width: 90%;
+                text-align: center;
+                border: none;
+                background-color: var(--cor-preto);
+                color: var(--cor-branca);
+                text-transform: uppercase;
+                padding: 0.4rem;
+                font-weight: 700;
+                margin-top: 0.5rem;
+            }
+        }
+    }
+}
+
+.carregar-mais {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+    .load-more{
+        padding: 0.5rem 1.3rem;
+        color: var(--cor-branca);
+        font-weight: 700;
+        text-transform: uppercase;
+        background-color: var(--cor-laranja);
+        border: none;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .produtos{
+        .lista-produtos{
+            padding: 0 2rem;
+            margin: 0 3rem;
+            .product-card{
+                max-width: 250px;
+                padding: 0.5rem;
+            }
+        }
+    }
+}
+
+@media screen and (min-width: 1728px) {
+    produtos{
+        .lista-produtos{
+            padding: 0 2rem;
+            margin: 0 5rem;
+            .product-card{
+                max-width: 300px;
+                padding: 1rem;
+            }
+        }
+    }
+}

@@ -1,1 +1,20 @@
 @import "reset";
+@import "header";
+@import "filtros";
+@import "lista_produtos";
+@import "footer";
+
+:root {
+    --fonte-principal: 'Open Sans', sans-serif;
+    --cor-cinza: #666666;
+    --cor-preto: #000000;
+    --cor-laranja: #FB953E;
+    --cor-branca: #FFFFFF;
+}
+
+body {
+    font-family: var(--fonte-principal);
+    color: var(--cor-preto);
+    background-color: var(--cor-branca);
+    font-size: 14px;
+}
