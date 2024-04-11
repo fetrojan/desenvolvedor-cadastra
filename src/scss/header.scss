@@ -2,6 +2,25 @@
     display: flex;
     justify-content: space-between;
     padding: 1rem 2rem;
+    .carrinho{
+        position: relative;
+        display: inline-block;
+        #sacolacompras{
+            display: block;
+        }
+        #contador-carrinho{
+            position: absolute;
+            bottom: 0;
+            left: 0.3rem;
+            background-color: var(--cor-laranja);
+            border-radius: 50%;
+            color: var(--cor-branca);
+            font-weight: bold;
+            width: 1rem;
+            display: flex;
+            justify-content: center;
+        }
+    }
 }
 
 .secao {

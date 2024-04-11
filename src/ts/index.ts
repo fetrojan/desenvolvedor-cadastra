@@ -93,6 +93,11 @@ function criaCardProduto(product: Product): HTMLElement {
 
     const buyButton = document.createElement("button");
     buyButton.textContent = "Comprar";
+    buyButton.className = 'botao-comprar'
+     // Definindo os atributos data para o botão de compra
+    buyButton.dataset.productId = product.id;
+    buyButton.dataset.productName = product.name;
+    buyButton.dataset.productPrice = product.price.toString();
 
     productCard.appendChild(productImage);
     productCard.appendChild(productName);
@@ -105,6 +110,27 @@ function criaCardProduto(product: Product): HTMLElement {
 
 document.addEventListener("DOMContentLoaded", main);
 
+document.addEventListener("click", (event) => {
+  const target = event.target as HTMLElement;
+  if (target && target.classList.contains("botao-comprar")) {
+      const botao = target as HTMLButtonElement;
+      const productId = botao.dataset.productId ? parseInt(botao.dataset.productId) : 0;
+      const productName = botao.dataset.productName || '';
+      const productPrice = botao.dataset.productPrice ? parseFloat(botao.dataset.productPrice) : 0;
+      const produto: Product = {
+          id: productId.toString(),
+          name: productName,
+          price: productPrice,
+          parcelamento: [1, productPrice],
+          color: 'cor', 
+          image: 'imagem.jpg', 
+          size: ['P', 'M', 'G'],
+          date: "de hoje"
+      };
+      console.log("Produto adicionado ao carrinho:", produto); // Verifica se o produto está sendo criado corretamente
+      adicionarAoCarrinho(produto);
+  }
+});
 
 
 //-----------------------------------------------------------------
@@ -309,4 +335,20 @@ function aplicarFiltroAutomatico() {
   const produtosFiltrados = filtrarProdutos(products, coresSelecionadas, tamanhosSelecionados, faixasPrecoSelecionadas);
 
   mostrarProdutos(produtosFiltrados);
+}
+
+//---------------------------------------------------
+
+const carrinho = []
+
+function adicionarAoCarrinho(produto: Product) {
+  carrinho.push(produto);
+  atualizarContadorCarrinho();
+}
+
+function atualizarContadorCarrinho() {
+  const contadorElemento = document.getElementById('contador-carrinho');
+  if (contadorElemento) {
+      contadorElemento.textContent = carrinho.length.toString();
+  }
 }
