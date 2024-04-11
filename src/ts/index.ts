@@ -171,8 +171,22 @@ function adicionarBotoesAcao() {
     botaoAplicar.textContent = 'Aplicar';
     botaoAplicar.className = "aplicar-filtros"
     botaoAplicar.addEventListener('click', () => {
-      // Lógica para aplicar os filtros
-      console.log('Filtros aplicados');
+      const coresSelecionadas = obterValoresSelecionados('.filtro-cores input[type="checkbox"]:checked')
+      const tamanhosSelecionados = obterValoresSelecionados('.opcoes_filtro-tamanho input[type="checkbox"]:checked')
+      const precosSelecionados = obterValoresSelecionados('.filtro-precos input[type="checkbox"]:checked')
+      // console.log('Cores selecionadas:', coresSelecionadas);
+      // console.log('Tamanhos selecionados:', tamanhosSelecionados);
+      // console.log('Preços Selecionados', precosSelecionados)
+      
+      const produtosFiltrados = filtrarProdutos(products, coresSelecionadas, tamanhosSelecionados, precosSelecionados);
+      // console.log('Produtos filtrados', produtosFiltrados)
+      if(produtosFiltrados.length === 0) {
+        mostrarProdutos(products)
+      } else {
+        mostrarProdutos(produtosFiltrados);
+      }
+      // console.log('Filtros aplicados');
+      modalFiltrar.style.display = "none";
     });
 
     // Botão "Limpar Filtros"
@@ -240,3 +254,59 @@ function atualizarBotoesAcao() {
 
 //-----------------------------------------------------------------
 
+function filtrarProdutos(products: Product[], cores: string[], tamanhos: string[], faixasPreco: string[]): Product[] {
+  const produtosFiltrados = products.filter((product: Product) => {
+    const corValida = cores.includes(product.color) || cores.length === 0
+    const tamanhoValido = tamanhos.some(size => product.size.includes(size)) || tamanhos.length === 0;
+    const precoValido = faixasPreco.some((faixa: string) => {
+      const [min, max] = faixa.split('-').map(Number);
+      return product.price >= min && product.price <= max;
+    }) || faixasPreco.length === 0;
+    // console.log(`Produto: ${product.name}, Cor: ${product.color}, Tamanhos: ${product.size}, Cor Válida: ${corValida}, Tamanho Válido: ${tamanhoValido}`);
+    return corValida && tamanhoValido && precoValido;
+})
+  if(produtosFiltrados.length === 0) {
+      alert('Nenhum produto encontrado')
+      return []
+  } else{
+    return produtosFiltrados
+  }
+}
+
+function obterValoresSelecionados(selector: string): string[] {
+  const elementosSelecionados = document.querySelectorAll(selector);
+  const valoresSelecionados: string[] = [];
+  elementosSelecionados.forEach((elemento: HTMLInputElement) => {
+    if (elemento.checked) {
+      valoresSelecionados.push(elemento.value);
+    }
+  });
+  return valoresSelecionados;
+}
+
+//-------------------------------------------------------------------------------
+
+document.querySelectorAll('.opcoes-cores input[type="checkbox"]').forEach(checkbox => {
+  checkbox.addEventListener('change', aplicarFiltroAutomatico);
+});
+
+document.querySelectorAll('.opcoes-tamanhos input[type="checkbox"]').forEach(checkbox => {
+  checkbox.addEventListener('change', aplicarFiltroAutomatico);
+});
+
+document.querySelectorAll('.opcoes-precos input[type="checkbox"]').forEach(checkbox => {
+  checkbox.addEventListener('change', aplicarFiltroAutomatico);
+});
+
+// Função para aplicar o filtro automaticamente quando um checkbox é alterado
+function aplicarFiltroAutomatico() {
+  const coresSelecionadas = obterValoresSelecionados('.opcoes-cores input[type="checkbox"]:checked');
+  // console.log('Cores:', coresSelecionadas)
+  const tamanhosSelecionados = obterValoresSelecionados('.opcoes-tamanhos input[type="checkbox"]:checked');
+  const faixasPrecoSelecionadas = obterValoresSelecionados('.opcoes-precos input[type="checkbox"]:checked');
+  // console.log('Tamanhos:', tamanhosSelecionados)
+  // console.log('faixaPreço:', faixasPrecoSelecionadas)
+  const produtosFiltrados = filtrarProdutos(products, coresSelecionadas, tamanhosSelecionados, faixasPrecoSelecionadas);
+
+  mostrarProdutos(produtosFiltrados);
+}
