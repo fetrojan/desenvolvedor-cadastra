@@ -1,69 +1,111 @@
 import { Product } from "./Product";
 
+let products: Product[] = []; // Variável global para armazenar a lista de produtos
+const productListContainer = document.getElementById("lista-produtos");
+
 const serverUrl = "http://localhost:5000/products";
 
 function main() {
-  fetchProducts().then((products) => mostrarProdutos(products));
+    buscarProdutos(serverUrl).then((produtosBuscados) => {
+        products = produtosBuscados; // Armazena os produtos na variável global
+        mostrarProdutos(products);
+    });
 }
 
-async function fetchProducts() {
-  try {
-    const response = await fetch(serverUrl);
-    if (!response.ok) {
-      throw new Error("Erro ao buscar produtos");
+window.addEventListener('resize', () => {
+    productListContainer.innerHTML = ''; // Limpa o conteúdo atual
+    mostrarProdutos(products); // Chama a função para mostrar os produtos novamente com base na largura atual da tela
+});
+
+async function buscarProdutos(url: string) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error("Erro ao buscar produtos");
+        }
+        return response.json();
+    } catch (error) {
+        console.error(error);
+        return [];
     }
-    return response.json();
-  } catch (error) {
-    console.error(error);
-    return [];
-  }
 }
 
 function mostrarProdutos(products: Product[]) {
-  const productListContainer = document.getElementById("lista-produtos");
+    if (!productListContainer) {
+        console.error("Elemento lista-produtos não encontrado");
+        return;
+    }
 
-  if (!productListContainer) {
-    console.error("Elemento lista-produtos não encontrado");
-    return;
-  }
+    const nomesProdutosExibidos = new Set<string>();
+    let produtosIniciais = window.innerWidth <= 1024 ? 4 : 6; // Define o número inicial de produtos a serem exibidos de acordo com a largura da tela
 
-  const nomesProdutosExibidos = new Set<string>();
+    // Limpa a lista de produtos antes de exibir os produtos iniciais
+    productListContainer.innerHTML = '';
 
-  products.forEach((product) => {
-    if (!nomesProdutosExibidos.has(product.name)){
-      const productCard = document.createElement("li");
-      productCard.classList.add("product-card");
+    for (let i = 0; i < products.length && i < produtosIniciais; i++) {
+        const product = products[i];
+        const productCard = criaCardProduto(product);
+        productListContainer.appendChild(productCard);
+        nomesProdutosExibidos.add(product.name);
+    }
 
-      const productName = document.createElement("h2");
-      productName.textContent = product.name;
+    if (products.length > produtosIniciais) {
+        const loadMoreButton = document.querySelector('.load-more') as HTMLButtonElement;
+        loadMoreButton.style.display = 'block'; // Mostra o botão "Carregar Mais"
 
-      const productPrice = document.createElement("p");
-      productPrice.textContent = `R$ ${product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-      
-      const parcelInfo = document.createElement("p");
-      parcelInfo.textContent = `até ${product.parcelamento[0]}x de R$${product.parcelamento[1].toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
-      parcelInfo.className = "parcelamento"
+        loadMoreButton.addEventListener('click', () => {
+            let nextProductsToShow = Math.min(products.length, nomesProdutosExibidos.size + 4); // Calcula o próximo grupo de produtos a serem exibidos
 
-      const productImage = document.createElement("img");
-      productImage.src = `${product.image}`
+            for (let i = nomesProdutosExibidos.size; i < nextProductsToShow; i++) {
+                const product = products[i];
 
-      const buyButton = document.createElement("button");
-      buyButton.textContent = "Comprar"
+                if (!nomesProdutosExibidos.has(product.name)) {
+                    const productCard = criaCardProduto(product);
+                    productListContainer.appendChild(productCard);
+                    nomesProdutosExibidos.add(product.name);
+                }
+            }
 
-      productCard.appendChild(productImage);
-      productCard.appendChild(productName);
-      productCard.appendChild(productPrice);
-      productCard.appendChild(parcelInfo);
-      productCard.appendChild(buyButton);
+            // Oculta o botão "Carregar Mais" se não houver mais produtos para exibir
+            if (nomesProdutosExibidos.size >= products.length) {
+                loadMoreButton.style.display = 'none';
+            }
+        });
+    }
+}
 
-      productListContainer.appendChild(productCard);
+function criaCardProduto(product: Product): HTMLElement {
+    const productCard = document.createElement("li");
+    productCard.classList.add("product-card");
 
-      nomesProdutosExibidos.add(product.name);
-    } 
-  });
+    const productName = document.createElement("h2");
+    productName.textContent = product.name;
+
+    const productPrice = document.createElement("p");
+    productPrice.textContent = `R$ ${product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+
+    const parcelInfo = document.createElement("p");
+    parcelInfo.textContent = `até ${product.parcelamento[0]}x de R$${product.parcelamento[1].toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+    parcelInfo.className = "parcelamento";
+
+    const productImage = document.createElement("img");
+    productImage.src = `${product.image}`;
+
+    const buyButton = document.createElement("button");
+    buyButton.textContent = "Comprar";
+
+    productCard.appendChild(productImage);
+    productCard.appendChild(productName);
+    productCard.appendChild(productPrice);
+    productCard.appendChild(parcelInfo);
+    productCard.appendChild(buyButton);
+
+    return productCard;
 }
 
 document.addEventListener("DOMContentLoaded", main);
+
+
 
 //-----------------------------------------------------------------
 
@@ -195,3 +237,6 @@ function atualizarBotoesAcao() {
     }
   }
 }
+
+//-----------------------------------------------------------------
+
