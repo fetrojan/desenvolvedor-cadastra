@@ -212,7 +212,13 @@
                             vertical-align: middle;
                             appearance: none;
                             border: 1px solid var(--cor-cinza);
-                            box-shadow: inset 0 0 0 2px white;
+                            box-shadow: inset 0 0 0 2px var(--cor-branca);
+                            cursor: pointer;
+                            transition: 0.2s;
+                        }
+                        input[type="checkbox"]:hover{
+                            scale: 1.05;
+                            border-color: var(--cor-preto);
                         }
                         label {
                             display: inline-block;
@@ -241,6 +247,14 @@
                                 line-height: 30px;
                                 width: 30px;
                                 height: 30px;
+                            }
+                            input[type="checkbox"] + label{
+                                cursor: pointer;
+                                transition: 0.2s;
+                            }
+                            input[type="checkbox"]:hover + label{
+                                scale: 1.05;
+                                border-color: var(--cor-preto);
                             }
                             label {
                                 display:block;
@@ -273,7 +287,13 @@
                             vertical-align: middle;
                             appearance: none;
                             border: 1px solid var(--cor-cinza);
-                            box-shadow: inset 0 0 0 2px white;
+                            box-shadow: inset 0 0 0 2px var(--cor-branca);
+                            cursor: pointer;
+                            transition: 0.2s;
+                        }
+                        input[type="checkbox"]:hover{
+                            scale: 1.05;
+                            border-color: var(--cor-preto);
                         }
                         label {
                             display: inline-block;
